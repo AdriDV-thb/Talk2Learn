@@ -1,0 +1,183 @@
+/* Animation for logo pulse */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.logo-icon {
+    animation: pulse 2s infinite;
+}
+
+/* Animation for audio waves */
+@keyframes wave1 {
+    0%, 100% { height: 5px; }
+    50% { height: 15px; }
+}
+
+@keyframes wave2 {
+    0%, 100% { height: 8px; }
+    50% { height: 18px; }
+}
+
+@keyframes wave3 {
+    0%, 100% { height: 6px; }
+    50% { height: 16px; }
+}
+
+#listeningIndicator.active .wave:nth-child(1) {
+    animation: wave1 0.8s infinite;
+}
+
+#listeningIndicator.active .wave:nth-child(2) {
+    animation: wave2 0.9s infinite;
+}
+
+#listeningIndicator.active .wave:nth-child(3) {
+    animation: wave3 0.7s infinite;
+}
+
+/* Animation for messages entry */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Animation for topic card hover */
+.topic-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.topic-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Animation for button hover */
+.action-button, .mic-button {
+    transition: all 0.3s ease;
+}
+
+/* Only apply hover animations on non-touch devices */
+@media (hover: hover) {
+    .mic-button:hover {
+        transform: scale(1.05);
+    }
+    
+    .action-button:hover {
+        transform: scale(1.1);
+    }
+}
+
+/* Animation for mic button when listening */
+@keyframes pulseMic {
+    0% {
+        box-shadow: 0 0 0 0 rgba(247, 37, 133, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(247, 37, 133, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(247, 37, 133, 0);
+    }
+}
+
+.mic-button.listening {
+    animation: pulseMic 1.5s infinite;
+}
+
+/* Animation for feedback panel entry */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.feedback-panel.active {
+    animation: slideDown 0.3s ease;
+}
+
+/* Animation for topic selection */
+@keyframes highlightTopic {
+    0% {
+        background-color: var(--light);
+    }
+    50% {
+        background-color: rgba(67, 97, 238, 0.1);
+    }
+    100% {
+        background-color: var(--light);
+    }
+}
+
+.topic-card.selected {
+    border-color: var(--primary);
+    animation: highlightTopic 1s ease;
+}
+
+/* Animation for AI thinking */
+@keyframes thinking {
+    0%, 100% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+.ai-thinking {
+    display: inline-block;
+    animation: thinking 1.5s infinite;
+}
+
+/* Animation for toast messages */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.toast.active {
+    animation: slideUp 0.3s ease;
+}
+
+/* Reduce animations on devices that prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .logo-icon,
+    #listeningIndicator.active .wave,
+    .topic-card,
+    .message,
+    .mic-button.listening,
+    .feedback-panel.active,
+    .topic-card.selected,
+    .ai-thinking,
+    .toast.active {
+        animation: none;
+        transition: none;
+    }
+}

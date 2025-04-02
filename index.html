@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Talk2Learn - Practice English with AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <!-- Add theme color for mobile browsers -->
+    <meta name="theme-color" content="#4361ee">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span class="logo-icon"><i class="fas fa-comment-dots"></i></span>
+            <span>Talk2Learn</span>
+        </div>
+        <p class="subtitle">Improve your English through natural conversations</p>
+    </header>
+
+    <main>
+        <section class="topics-section">
+            <div class="topics-header">
+                <h2 class="topics-title">Choose a topic to practice</h2>
+                <div class="level-selector">
+                    <span>Level:</span>
+                    <select id="levelSelect">
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate" selected>Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                </div>
+            </div>
+            <div class="topics-grid" id="topicsGrid">
+                <!-- Topics will be inserted by JavaScript -->
+            </div>
+        </section>
+
+        <section class="conversation-section">
+            <div class="conversation-header">
+                <h3 class="conversation-title">
+                    <span class="conversation-title-icon"><i class="fas fa-comments"></i></span>
+                    <span id="currentTopic">Select a topic to start</span>
+                </h3>
+                <div class="conversation-actions">
+                    <button class="action-button" id="resetBtn" title="Reset conversation" aria-label="Reset conversation">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                    <button class="action-button" id="helpBtn" title="Help" aria-label="Help">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="conversation-body" id="conversationBody">
+                <!-- Conversation messages will be inserted here -->
+                <div class="welcome-message">
+                    <h3>Welcome to Talk2Learn!</h3>
+                    <p>Choose a topic from above to start practicing English conversation.</p>
+                    <p>You'll be able to speak directly to our AI assistant and receive instant feedback on your pronunciation and grammar.</p>
+                </div>
+            </div>
+            <div class="conversation-footer">
+                <div class="input-container">
+                    <div class="speech-feedback">
+                        <div id="listeningIndicator">
+                            <div class="wave"></div>
+                            <div class="wave"></div>
+                            <div class="wave"></div>
+                        </div>
+                        <span id="speechStatus">Click the mic to start speaking</span>
+                    </div>
+                    <button class="mic-button" id="micButton" aria-label="Microphone button">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+                <div class="feedback-panel" id="feedbackPanel">
+                    <!-- Feedback on speech will appear here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>How to Use Talk2Learn</h3>
+                <button class="close-modal" aria-label="Close modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p>1. <strong>Select a topic</strong> from the list above.</p>
+                <p>2. <strong>Click the microphone button</strong> and start speaking in English.</p>
+                <p>3. <strong>Listen to the AI response</strong> and continue the conversation.</p>
+                <p>4. <strong>Review your feedback</strong> at the bottom to improve your pronunciation and grammar.</p>
+                <hr>
+                <p>Our AI will automatically detect your English level and adapt to help you improve naturally.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="js/topics.js"></script>
+    <script src="js/speechRecognition.js"></script>
+    <script src="js/speechSynthesis.js"></script>
+    <script src="js/aiConversation.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
