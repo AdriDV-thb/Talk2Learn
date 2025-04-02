@@ -1,5 +1,6 @@
 /**
  * Speech synthesis functionality for the Talk2Learn application
+ * Enhanced for consistent English pronunciation across devices
  */
 
 // Speech synthesis voices
@@ -29,31 +30,35 @@ function initializeSpeechSynthesis() {
  */
 function loadVoices() {
     voices = window.speechSynthesis.getVoices();
+    console.log('Available voices:', voices.map(v => `${v.name} (${v.lang})`).join(', '));
     
-    // Try to find a good English voice
+    // First priority: Try to find specific high-quality English voices
     preferredVoice = voices.find(voice => 
-        voice.name.includes('Google UK English Female') || 
-        voice.name.includes('Microsoft Zira')
+        (voice.name.includes('Google UK English Female') || 
+        voice.name.includes('Microsoft Zira') ||
+        voice.name.includes('Samantha')) && 
+        voice.lang.startsWith('en-')
     );
     
-    // If no specific voice found, find any English voice
+    // Second priority: Find any English female voice
     if (!preferredVoice) {
         preferredVoice = voices.find(voice => 
-            voice.lang.includes('en-') && voice.name.includes('Female')
+            voice.lang.startsWith('en-') && 
+            (voice.name.includes('Female') || voice.name.includes('Woman'))
         );
     }
     
-    // Fall back to any English voice
+    // Third priority: Find any English voice
     if (!preferredVoice) {
-        preferredVoice = voices.find(voice => voice.lang.includes('en-'));
+        preferredVoice = voices.find(voice => voice.lang.startsWith('en-'));
     }
     
-    // Last resort: use the first available voice
+    // Last resort: use the first available voice but force English language
     if (!preferredVoice && voices.length > 0) {
         preferredVoice = voices[0];
     }
     
-    console.log('Selected voice:', preferredVoice ? preferredVoice.name : 'None available');
+    console.log('Selected voice:', preferredVoice ? `${preferredVoice.name} (${preferredVoice.lang})` : 'None available');
 }
 
 /**
@@ -77,16 +82,19 @@ function speakText(text) {
         // Cancel any ongoing speech
         window.speechSynthesis.cancel();
         
-        // Create utterance
+        // Create utterance with explicit English language setting
         const utterance = new SpeechSynthesisUtterance(text);
+        
+        // Explicitly set English language
+        utterance.lang = 'en-US';
         
         // Set voice if available
         if (preferredVoice) {
             utterance.voice = preferredVoice;
         }
         
-        // Set properties
-        utterance.rate = 1;
+        // Set properties - slightly slower rate for mobile clarity
+        utterance.rate = 0.95; // Slightly slower for better clarity
         utterance.pitch = 1;
         utterance.volume = 1;
         
@@ -101,6 +109,12 @@ function speakText(text) {
             reject(event);
         };
         
+        // Fix for Android Chrome cutting off speech
+        if (/Android/i.test(navigator.userAgent) && /Chrome/i.test(navigator.userAgent)) {
+            window.speechSynthesis.pause();
+            window.speechSynthesis.resume();
+        }
+        
         // Speak the utterance
         window.speechSynthesis.speak(utterance);
     });
@@ -113,8 +127,9 @@ function speakText(text) {
  * @returns {string[]} Array of text chunks
  */
 function splitTextIntoChunks(text) {
-    // Maximum characters per chunk
-    const maxChunkLength = 200;
+    // Maximum characters per chunk (shorter for mobile devices)
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const maxChunkLength = isMobile ? 150 : 200;
     
     // Split by sentence endings
     const sentenceBreaks = text.split(/(?<=[.!?])\s+/);
@@ -149,5 +164,14 @@ async function speakLongText(text) {
     
     for (const chunk of chunks) {
         await speakText(chunk);
+        
+        // Add a small pause between chunks for natural speech flow
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Fix for mobile browsers that may pause speech synthesis
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            window.speechSynthesis.pause();
+            window.speechSynthesis.resume();
+        }
     }
 }
