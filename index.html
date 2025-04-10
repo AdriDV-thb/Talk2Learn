@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talk2Learn - English Conversation Practice</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="description" content="Practice English conversation with an interactive voice assistant">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <i class="fas fa-comments"></i>
+                <h1>Talk2Learn</h1>
+            </div>
+            <button id="help-button" aria-label="Help" type="button">
+                <i class="fas fa-question-circle"></i>
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topic Selector Panel -->
+            <section class="topic-selector-panel">
+                <h2>Choose a Topic</h2>
+                <div class="topics-grid">
+                    <button class="topic-btn" data-topic="personalInfo">
+                        <i class="fas fa-user"></i>
+                        <span>Personal Information</span>
+                    </button>
+                    <button class="topic-btn" data-topic="freeTime">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Free Time</span>
+                    </button>
+                    <button class="topic-btn" data-topic="pastActivities">
+                        <i class="fas fa-history"></i>
+                        <span>Past Activities</span>
+                    </button>
+                    <button class="topic-btn" data-topic="experiences">
+                        <i class="fas fa-star"></i>
+                        <span>Experiences</span>
+                    </button>
+                    <button class="topic-btn" data-topic="futurePlans">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Future Plans</span>
+                    </button>
+                    <button class="topic-btn" data-topic="recommendations">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Recommendations</span>
+                    </button>
+                    <button class="topic-btn" data-topic="imaginarySituations">
+                        <i class="fas fa-cloud-sun"></i>
+                        <span>Imaginary Situations</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Conversation Panel -->
+            <section class="conversation-panel hidden">
+                <div class="conversation-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Messages will be inserted here by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="voice-controls">
+                    <div class="voice-indicators">
+                        <div class="voice-indicator" id="voice-wave">
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                        </div>
+                        <span id="voice-status">Ready to listen...</span>
+                    </div>
+
+                    <div class="control-buttons">
+                        <button id="back-btn" class="control-btn">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back</span>
+                        </button>
+                        <button id="mic-btn" class="control-btn primary">
+                            <i class="fas fa-microphone"></i>
+                            <span>Speak</span>
+                        </button>
+                        <button id="repeat-btn" class="control-btn">
+                            <i class="fas fa-redo"></i>
+                            <span>Repeat</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Help/Theory Panel -->
+            <section class="help-panel hidden" id="help-panel">
+                <div class="help-header">
+                    <h2>Grammar Help</h2>
+                    <button id="close-help" type="button">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="help-content" id="help-content">
+                    <!-- Help content will be inserted here by JavaScript -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Popup for permission/errors -->
+    <div class="popup hidden" id="popup">
+        <div class="popup-content">
+            <h3 id="popup-title">Microphone Access</h3>
+            <p id="popup-message">This app needs microphone access to work. Please grant permission when prompted.</p>
+            <button id="popup-btn">Got it</button>
+        </div>
+    </div>
+
+    <!-- Scripts - Order matters -->
+    <script src="scripts/speechHandler.js"></script>
+    <script src="scripts/topics/personalInfo.js"></script>
+    <script src="scripts/topics/freeTime.js"></script>
+    <script src="scripts/topics/pastActivities.js"></script>
+    <script src="scripts/topics/experiences.js"></script>
+    <script src="scripts/topics/futurePlans.js"></script>
+    <script src="scripts/topics/recommendations.js"></script>
+    <script src="scripts/topics/imaginarySituations.js"></script>
+    <script src="scripts/uiController.js"></script>
+    <script src="scripts/app.js"></script>
+
+    <!-- Direct help button handler as fallback -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Diagnostic checks
+            setTimeout(function() {
+                console.log("Running diagnostic checks...");
+                
+                // Check if speechHandler initialized
+                if (!window.speechHandler) {
+                    console.error('SpeechHandler not initialized correctly');
+                    document.getElementById('popup-title').textContent = 'Initialization Error';
+                    document.getElementById('popup-message').textContent = 
+                        'The voice system did not load correctly. Please reload the page or try with another browser (Chrome recommended).';
+                    document.getElementById('popup').classList.remove('hidden');
+                } else {
+                    console.log('SpeechHandler initialized correctly');
+                }
+
+                // Ensure UI Controller is initialized
+                if (!window.uiController) {
+                    console.error('UI Controller not initialized correctly');
+                }
+
+                // Direct help button event handler as fallback
+                const helpButton = document.getElementById('help-button');
+                const helpPanel = document.getElementById('help-panel');
+                
+                if (helpButton && helpPanel) {
+                    console.log("Adding emergency direct event handler to help button");
+                    // Remove any existing listeners to avoid conflicts
+                    helpButton.replaceWith(helpButton.cloneNode(true));
+                    
+                    // Get fresh reference after replacing
+                    const newHelpButton = document.getElementById('help-button');
+                    
+                    // Add direct event listener
+                    newHelpButton.addEventListener('click', function(e) {
+                        console.log("Help button clicked (emergency handler)");
+                        e.preventDefault();
+                        e.stopPropagation();
+                        helpPanel.classList.toggle('hidden');
+                        
+                        // Update content if showing and uiController exists
+                        if (!helpPanel.classList.contains('hidden') && window.uiController && window.uiController.updateGrammarHelp) {
+                            window.uiController.updateGrammarHelp();
+                        }
+                        
+                        console.log("Help panel is now:", helpPanel.classList.contains('hidden') ? "hidden" : "visible");
+                        return false;
+                    });
+                    
+                    // Also fix close help button
+                    const closeHelpButton = document.getElementById('close-help');
+                    if (closeHelpButton) {
+                        closeHelpButton.replaceWith(closeHelpButton.cloneNode(true));
+                        const newCloseButton = document.getElementById('close-help');
+                        newCloseButton.addEventListener('click', function() {
+                            console.log("Close help button clicked (emergency handler)");
+                            helpPanel.classList.add('hidden');
+                        });
+                    }
+                }
+                
+                // Request microphone permission on startup
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    navigator.mediaDevices.getUserMedia({ audio: true })
+                        .then(function(stream) {
+                            console.log('Microphone permission granted');
+                            // Release the stream
+                            stream.getTracks().forEach(track => track.stop());
+                        })
+                        .catch(function(err) {
+                            console.error('Error getting microphone permission:', err);
+                            document.getElementById('popup-title').textContent = 'Microphone Error';
+                            document.getElementById('popup-message').textContent = 
+                                'Could not access the microphone. Please make sure to give microphone permissions to use this app.';
+                            document.getElementById('popup').classList.remove('hidden');
+                        });
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>
